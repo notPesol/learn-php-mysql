@@ -5,6 +5,11 @@
     <!-- head -->
     <?php require 'bs_head.php' ?>
 
+    <style>
+        #d1{
+            max-width: 300px;
+        }
+    </style>
 
 </head>
 
@@ -12,7 +17,8 @@
     <!-- navbar -->
     <?php require 'bs_navbar.php' ?>
 
-    <?php
+    <div class="card-deck mt-5 justify-content-center">
+        <?php
         require 'lib/pagination-v2.class.php';
         $page = new PaginationV2();
 
@@ -20,17 +26,17 @@
 
         $sql = "SELECT * FROM product";
 
-        $result = $page->query($mysqli, $sql, 4);
-        while ($p = $result->fetch_object()){
+        $result = $page->query($mysqli, $sql, 3);
+        while ($p = $result->fetch_object()) {
             $name = $p->name;
             $detail = $p->detail;
             $type_product = $p->type_id;
 
-            if (strlen($name) > 20){
+            if (strlen($name) > 20) {
                 $name = mb_substr($name, 0, 20) . '...';
             }
 
-            if (strlen($detail) > 50){
+            if (strlen($detail) > 50) {
                 $detail = mb_substr($detail, 0, 50) . '...';
             }
 
@@ -46,12 +52,22 @@
                 </div>
                 HTML;
         }
+        
+        $mysqli->close();
+
+        ?>
+    </div> <br>
+
+    <?php
+        if ($page->total_pages() > 1){
+            $page->echo_pagenums_bootstrap();
+        }
     ?>
 
     <!-- footer -->
     <?php require 'bs_footer.php' ?>
 
-    
+
 
 </body>
 

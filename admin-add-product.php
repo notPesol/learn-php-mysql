@@ -25,14 +25,14 @@
             if ($_FILES['upfile']['error'] > 0 || $type[0] != 'image') {
                 $msg = 'เกิดข้อผิดพลาดในการอัปโหลด !!!';
                 $bs_class = 'alert-danger';
-                goto end_post;
+                goto end_post; 
             }
 
             $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
             $sql = "INSERT INTO product VALUES(?,?,?,?,?)";
             $stmt = $mysqli->stmt_init();
             $stmt->prepare($sql);
-            $param = [0, $_POST['name'], $_POST['detail'], '', $_POST['type_product']];
+            $param = [0, $_POST['name'], ltrim($_POST['detail'], " "), '', $_POST['type_product']];
             $stmt->bind_param('issss', ...$param);
             $stmt->execute();
             $product_id = $stmt->insert_id;
@@ -75,9 +75,8 @@
             <input name="name" type="text" class="form-control" id="name" aria-describedby="nameHelp" required>
         </div>
         <div class="form-group">
-            <label for="pass">รายละเอียดสินค้า</label>
-            <small id="pass" class="form-text text-muted">รายละเอียดต้องเข้าใจ</small>
-            <textarea type="text" class="form-control" name="detail" id="pass" aria-describedby="pass" required>
+            <label for="textarea">รายละเอียดสินค้า</label>
+            <textarea type="text" rows="2" class="form-control" name="detail" id="textarea" aria-describedby="textarea" required>
             </textarea>
         </div>
         <div class="form-group mb-3">
