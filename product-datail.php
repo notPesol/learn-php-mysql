@@ -52,13 +52,24 @@
         goto end_page;
     }
 
-    list($id, $name, $detail, $img_file, $type_product) = $result->fetch_row();
+    list($id, $name, $detail, $price, $remain, $img_file, $type_id) = $result->fetch_row();
+    
+    $sql_t = "SELECT name FROM type_of_product WHERE id = $type_id";
+    $t_result = $mysqli->query($sql_t);
+    
+    $type_name = '';
+    if ($mysqli->error || $t_result->num_rows == 0){
+        $type_name = '';
+    }
+    list($type_name) = $t_result->fetch_row();
+
 
     echo <<<HTML
             <div class="card mx-auto mt-2" style="max-width: 60rem;">
             <img src="product-images/$img_file" class="card-img-top" alt="productPic">
             <div class="card-body">
                 <h5 class="card-title text-center">$name</h5>
+                <h6 class="card-subtitle mb-2 text-primary">{$price}฿ <cite title="Source Title">$type_name</cite></h6> 
                 <p class="card-text">$detail</p>
             </div>
             </div>

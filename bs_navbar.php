@@ -1,3 +1,15 @@
+<?php
+    function is_active(...$file){
+        $path = $_SERVER['PHP_SELF'];
+        foreach($file as $f){
+            if (stripos($path, $f)){
+                return 'active';
+            }
+        }
+        return '';
+    }
+?>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="index.php"><img src="image/logo.png" alt="logo" width="35"> &nbsp;
         <strong>SPN Store</strong></a>
@@ -7,20 +19,17 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            <li class="nav-item <?= is_active('/index.php') ?>">
+                <a class="nav-link" href="index.php">หน้าแรก <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <?php if (!isset($_SESSION['user'])) {
+            <?php if (!isset($_SESSION['member_name'])) {
                 echo <<<HTML
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 สมาชิก
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">ลงชื่อเข้าใช้</a>
+                                <a class="dropdown-item" href="member-signin.php">ลงชื่อเข้าใช้</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#">สมัครสมาชิก</a>
                                 
@@ -28,9 +37,27 @@
                         </li>
                 HTML;
             } else {
-                echo '<li class="nav-item">
-                <a class="nav-link" href="#">ตะกร้าสินค้า</a>
-            </li>';
+                $member_name = mb_substr($_SESSION['member_name'], 0, 20);
+                echo <<<HTML
+                    <div class="dropdown ml-md-3">
+                        <a href="#" class="btn btn-sm btn-info dropdown-toggle py-1 mt-2 mt-md-1">
+                            $member_name
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item w-auto">
+                                ประวัติการสั่งซื้อ
+                            </a>
+                            <a href="wish-list.php" class="dropdown-item w-auto">
+                                รายการที่ชอบ
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">ข้อมูลส่วนตัว</a>
+                            <a href="member-signout.php">
+                                ออกจากระบบ
+                            </a>
+                        </div>
+                    </div>
+                    HTML;
             }
 
             ?>
