@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Gumlet\\' => array($vendorDir . '/gumlet/php-image-resize/lib'),
     'FastImageSize\\tests\\' => array($vendorDir . '/marc1706/fast-image-size/tests'),
     'FastImageSize\\' => array($vendorDir . '/marc1706/fast-image-size/lib'),

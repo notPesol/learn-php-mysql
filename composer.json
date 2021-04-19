@@ -3,6 +3,7 @@
     "require": {
         "marc1706/fast-image-size": "^1.1",
         "gumlet/php-image-resize": "^2.0",
-        "stefangabos/zebra_pagination": "^2.3"
+        "stefangabos/zebra_pagination": "^2.3",
+        "phpmailer/phpmailer": "^6.4"
     }
 }

@@ -7,6 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit25f1ba2c64ac705d1ad827b6e114cbeb
 {
     public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
+            'PHPMailer\\PHPMailer\\' => 20,
+        ),
         'G' => 
         array (
             'Gumlet\\' => 7,
@@ -19,6 +23,10 @@ class ComposerStaticInit25f1ba2c64ac705d1ad827b6e114cbeb
     );
 
     public static $prefixDirsPsr4 = array (
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
         'Gumlet\\' => 
         array (
             0 => __DIR__ . '/..' . '/gumlet/php-image-resize/lib',

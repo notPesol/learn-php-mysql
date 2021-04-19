@@ -1,3 +1,11 @@
+<?php
+//Import PHPMailer classes into the global namespace
+//These must be at the top of your script, not inside a function
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,17 +28,17 @@
                 $lname = $_POST['lastname'];
                 $email = $_POST['email'];
                 $password = $_POST['password'];
-
+                $code = strval(mt_rand(100000, 999999)); //รหัสยืนยัน
                 $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
 
-                $sql = "INSERT INTO member VALUES(?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO member VALUES(?, ?, ?, ?, ?, ?)";
 
                 $stmt = $mysqli->stmt_init();
                 $stmt->prepare($sql);
 
-                $params = [0, $email, $password, $fname, $lname];
+                $params = [0, $email, $password, $fname, $lname, $code];
 
-                $stmt->bind_param('issss', ...$params);
+                $stmt->bind_param('isssss', ...$params);
                 $stmt->execute();
 
                 $aff_rows = $stmt->affected_rows;
@@ -39,21 +47,71 @@
                 $stmt->close();
                 $mysqli->close();
 
-                // ถ้าสมัครสำเร็จให้เก็บข้อมูล member_id, member_firstname ไว้ใน session
-                if ($aff_rows == 1){
-                    $_SESSION['member_id'] = $insert_id;
-                    $_SESSION['member_name'] = $fname;
+                $err = ''; //เอาไว้เก็บข้อผิดพลาดหากส่งเมลล์ไม่สำเร็จ
 
-                    echo '<script>location= "member-signin.php" </script>';
-                    exit;
-                }else{
+                // ถ้าสมัครสำเร็จให้เก็บข้อมูล member_id, member_firstname ไว้ใน session
+                if ($aff_rows == 1) {
+                    //Load Composer's autoloader
+                    require 'vendor/autoload.php';
+                    //Instantiation and passing `true` enables exceptions
+                    $mail = new PHPMailer(true);
+                    $mail->CharSet = 'utf-8';
+
+                    //Server settings
+                    $mail->isSMTP();                                            //Send using SMTP
+                    $mail->Mailer = 'smtp';
+                    $mail->Host       = 'smtp.gmail.com';                       //Set the SMTP server to send through
+                    $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+                    $mail->Username   = 'pesol2012@gmail.com';                  //SMTP username
+                    $mail->Password   = 'ivgqainqcvptgwbv';                     //SMTP password
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+                    $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+
+                    //Recipients
+                    $mail->setFrom('admin@example.com', 'SPN STORE');
+                    $mail->addAddress($email, $fname);     //Add a recipient
+                    $mail->addReplyTo('info@example.com', 'Information');
+                    $mail->addCC('cc@example.com');
+                    $mail->addBCC('bcc@example.com');
+
+                    //Content
+                    $mail->isHTML(true);                                  //Set email format to HTML
+                    $mail->Subject = 'รหัสยืนยันจาก SPN STORE';
+                    $mail->Body    = 'รหัสยืนยัน: ' . "<b>{$code}</b> <br> (นี่เป็นระบบอัตโนมัติ)";
+                    $mail->AltBody = 'รหัสยืนยัน: ' . $code;
+
+                    if($mail->send()){
+                        $_SESSION['email'] = $email;
+                        echo <<<HTML
+                        <div class="alert alert-success alert-dismissible">
+                            การสมัครสำเร็จ รหัสยืนยันถูกส่งไปที่อีเมลล์เรียบร้อยแล้ว <br>
+                            กรุณานำรหัสดังกล่าวมายืนยันในขั้นตอนการเข้าสู่ระบบ
+                            <button class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        </div>
+                        HTML;
+                        sleep(10);
+                        echo '<script>location= "member-verify.php" </script>';
+                        exit;
+                    }else{
+                        $err = "Message could not be sent. Mailer Error: {$mail->ErrorInfo} <br> กรุณาติดต่อผู้ดูแล";
+                    }
+
+                } else {
                     echo <<<HTML
                         <div class="alert alert-danger alert-dismissible">
-                            การสมัครผิดพลาด หรือ อีเมลล์มีคนใช้แล้ว !
+                            การสมัครผิดพลาด หรือ อีเมลล์มีคนใช้แล้ว ! <br>
+                            $err
                             <button class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                         </div>
                         HTML;
                 }
+            }else{
+                echo <<<HTML
+                            <div class="alert alert-danger alert-dismissible">
+                                รหัสผ่านทั้งสองช่องไม่ตรงกัน ! <br>
+                                <button class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            </div>
+                            HTML;
             }
         }
         ?>

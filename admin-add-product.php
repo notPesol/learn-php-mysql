@@ -29,7 +29,7 @@
             }
 
             $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
-            $sql = "INSERT INTO product VALUES(?,?,?,?,?)";
+            $sql = "INSERT INTO product VALUES(?, ?, ?, ?, ?, ?)";
             $stmt = $mysqli->stmt_init();
             $stmt->prepare($sql);
             $param = [0, $_POST['name'], ltrim($_POST['detail'], " "), '', $_POST['type_product']];
