@@ -1,13 +1,14 @@
 <?php
-    function is_active(...$file){
-        $path = $_SERVER['PHP_SELF'];
-        foreach($file as $f){
-            if (stripos($path, $f)){
-                return 'active';
-            }
+function is_active(...$file)
+{
+    $path = $_SERVER['PHP_SELF'];
+    foreach ($file as $f) {
+        if (stripos($path, $f)) {
+            return 'active';
         }
-        return '';
     }
+    return '';
+}
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -31,7 +32,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="member-signin.php">ลงชื่อเข้าใช้</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">สมัครสมาชิก</a>
+                                <a class="dropdown-item" href="member-signup.php">สมัครสมาชิก</a>
                                 
                             </div>
                         </li>
@@ -39,11 +40,11 @@
             } else {
                 $member_name = mb_substr($_SESSION['member_name'], 0, 20);
                 echo <<<HTML
-                    <div class="dropdown ml-md-3">
-                        <a href="#" class="btn btn-sm btn-info dropdown-toggle py-1 mt-2 mt-md-1">
-                            $member_name
-                        </a>
-                        <div class="dropdown-menu">
+                    <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                $member_name
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a href="#" class="dropdown-item w-auto">
                                 ประวัติการสั่งซื้อ
                             </a>
@@ -51,12 +52,16 @@
                                 รายการที่ชอบ
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">ข้อมูลส่วนตัว</a>
-                            <a href="member-signout.php">
+                            <a class="dropdown-item" href="#">
+                                ข้อมูลส่วนตัว
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="member-signout.php">
                                 ออกจากระบบ
                             </a>
-                        </div>
-                    </div>
+                                
+                            </div>
+                        </li>
                     HTML;
             }
 
