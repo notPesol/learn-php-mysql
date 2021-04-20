@@ -47,6 +47,15 @@
             $('#modelReply').modal();
             $('#modal-qid').val(questionId);
         }
+
+        //เมื่อคลิกที่ภาพ ให้แสดงภาพขนาดจริงใน Modal
+        $('img#product').click(function() {
+            var name = $('#pro-name').text();
+            $('.modal-title#title-model').text(name);
+            var img_src = $(this).prop('src');
+            $('.modal-body#m-body > img').prop('src', img_src);
+            $('#bsModal').modal();
+        });
     </script>
 </head>
 
@@ -332,10 +341,10 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title"></h6>
+                    <h6 id="title-model" class="modal-title"></h6>
                     <button class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <div class="modal-body"><img src=""></div>
+                <div id="m-body" class="modal-body"><img src=""></div>
             </div> <!-- modal-content -->
         </div> <!-- modal-dialog -->
     </div> <!-- modal -->
