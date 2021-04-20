@@ -25,15 +25,15 @@
             if ($_FILES['upfile']['error'] > 0 || $type[0] != 'image') {
                 $msg = 'เกิดข้อผิดพลาดในการอัปโหลด !!!';
                 $bs_class = 'alert-danger';
-                goto end_post; 
+                goto end_post;
             }
 
             $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
             $sql = "INSERT INTO product VALUES(?, ?, ?, ?, ?, ?)";
             $stmt = $mysqli->stmt_init();
             $stmt->prepare($sql);
-            $param = [0, $_POST['name'], ltrim($_POST['detail'], " "), '', $_POST['type_product']];
-            $stmt->bind_param('issss', ...$param);
+            $param = [0, $_POST['name'], ltrim($_POST['detail'], " "), $POST['price'], $_POST['remain'], '', $_POST['type_product']];
+            $stmt->bind_param('issdisi', ...$param);
             $stmt->execute();
             $product_id = $stmt->insert_id;
             $stmt->close();
@@ -68,24 +68,33 @@
                     HTML;
         }
 
-
         ?>
-        <div class="form-group">
+
+        <h6 class="text-info text-center">เพิ่มรายการสินค้า</h6>
+        <div class="form-group mt-3">
             <label for="name">ชื่อสินค้า</label>
             <input name="name" type="text" class="form-control" id="name" aria-describedby="nameHelp" required>
+        </div>
+        <div class="form-group">
+            <label for="type_pro">ประเภทสินค้า</label>
+            <input name="type_product" type="text" class="form-control" placeholder="ใส่รหัสประเภท" id="type_pro" required>
         </div>
         <div class="form-group">
             <label for="textarea">รายละเอียดสินค้า</label>
             <textarea type="text" rows="2" class="form-control" name="detail" id="textarea" aria-describedby="textarea" required>
             </textarea>
         </div>
-        <div class="form-group mb-3">
-            <div class="mb-2 bg-info"><strong>ภาพประกอบ</strong></div>
-            <input type="file" name="upfile" id="pic" accept="image/*" required>
+        <div class="form-group mt-3">
+            <label for="name">ราคา</label>
+            <input name="price" type="text" class="form-control" id="price" aria-describedby="nameHelp" required>
         </div>
-        <div class="form-group">
-            <label for="type_pro">ประเภทสินค้า</label>
-            <input name="type_product" type="text" class="form-control" id="type_pro" required>
+        <div class="form-group mt-3">
+            <label for="name">จำนวนคงเหลือ</label>
+            <input name="remain" type="text" class="form-control" id="remain" aria-describedby="nameHelp" required>
+        </div>
+        <div class="mb-2 bg-info"><strong>ภาพสินค้า</strong></div>
+        <div class="form-group mb-3">
+            <input type="file" name="upfile" id="pic" accept="image/*" required>
         </div>
         <button type="submit" class="btn btn-primary">ตกลง</button>
     </form>
