@@ -29,10 +29,10 @@
             }
 
             $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
-            $sql = "INSERT INTO product VALUES(?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO product VALUES(?, ?, ?, ?, ?, ?, ?)";
             $stmt = $mysqli->stmt_init();
             $stmt->prepare($sql);
-            $param = [0, $_POST['name'], ltrim($_POST['detail'], " "), $POST['price'], $_POST['remain'], '', $_POST['type_product']];
+            $param = [0, $_POST['name'], ltrim($_POST['detail'], " "), intval($_POST['price']), intval($_POST['remain']) ,'', intval($_POST['type_product'])];
             $stmt->bind_param('issdisi', ...$param);
             $stmt->execute();
             $product_id = $stmt->insert_id;
@@ -69,7 +69,7 @@
         }
 
         ?>
-
+        
         <h6 class="text-info text-center">เพิ่มรายการสินค้า</h6>
         <div class="form-group mt-3">
             <label for="name">ชื่อสินค้า</label>

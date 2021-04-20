@@ -4,6 +4,28 @@
 <head>
     <!-- head -->
     <?php require 'bs_head.php' ?>
+    <style>
+        div.main-container {
+            max-width: 680px;
+            min-width: 400px;
+        }
+
+        img#product {
+            max-width: 150px;
+            max-height: 150px;
+            cursor: pointer;
+        }
+
+        p#detail,
+        div.container {
+            font-size: 0.9rem;
+        }
+
+        div.modal img {
+            max-width: 450px;
+            max-height: 450px;
+        }
+    </style>
 
     <script>
         $(function() {
@@ -43,6 +65,44 @@
 
     $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
 
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $mid = 0;
+        $msg = '';
+        $bs_class = '';
+
+        if (!isset($_SESSION['member_id'])) {
+            $msg = 'ต้องเข้าสู่ระบบก่อนบันทึกรายการที่ชอบ';
+            $bs_class = 'alert-danger';
+            goto end_post;
+        } else {
+            $mid = $_SESSION['member_id'];
+        }
+
+        // เพื่อป้องกันการบันทึกซ้ำ ให้นับว่ามีสินค้านี้อยู่ในฐานข้อมูลแล้วหรือไม่
+        $sql = "SELECT COUNT(*) FROM wish_list WHERE member_id = $mid AND product_id = $product_id";
+
+        $resutll = $mysqli->query($sql);
+
+        list($count) = $resutll->fetch_row();
+        if ($count == 0) { // ถ้าไม่เคยบันทึก ให้ทำการบันทึก
+            $sql = "INSERT INTO wish_list VALUE(?, ?, ?)";
+            $params = [0, $mid, $product_id];
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param('iii', ...$params);
+            $stmt->execute();
+        }
+        $msg = 'บันทึกเป็นรายการที่ชอบแล้ว';
+        $bs_class = 'alert-success';
+
+        end_post:
+        echo <<<HTML
+            <div class="alert $bs_class mb-4" role="alert">
+                $msg
+                <button class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            </div>
+            HTML;
+    }
+
     $sql = "SELECT * FROM product WHERE id = $product_id";
 
     $result = $mysqli->query($sql);
@@ -53,27 +113,57 @@
     }
 
     list($id, $name, $detail, $price, $remain, $img_file, $type_id) = $result->fetch_row();
-    
+
+    $price = number_format($price);
+
+    if ($remain == 0) {
+        $remain = 'สินค้าหมด';
+    }
+
     $sql_t = "SELECT name FROM type_of_product WHERE id = $type_id";
     $t_result = $mysqli->query($sql_t);
-    
+
     $type_name = '';
-    if ($mysqli->error || $t_result->num_rows == 0){
+    if ($mysqli->error || $t_result->num_rows == 0) {
         $type_name = '';
     }
     list($type_name) = $t_result->fetch_row();
 
 
     echo <<<HTML
-            <div class="card mx-auto mt-2" style="max-width: 60rem;">
-            <img src="product-images/$img_file" class="card-img-top" alt="productPic">
-            <div class="card-body">
-                <h5 class="card-title text-center">$name</h5>
-                <h6 class="card-subtitle mb-2 text-primary">{$price}฿ <cite title="Source Title">$type_name</cite></h6> 
-                <p class="card-text">$detail</p>
+        <div class="main-container mx-auto mt-5">
+
+            <div class="d-flex">
+                <div>
+                        <img src="product-images/$img_file" id="product" class="mr-4 mt-2">
+                </div>
+                <div>
+                        <h6 id="pro-name" class="font-weight-bold text-info">$name</h6>
+                        <p id="detail">$detail</p>
+                        <div class="container">
+                            <div class="row my-1">
+                                    <div class="col">ราคา: $price</div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-sm btn-secondary text-white-50 disabled">
+                                                <i class="fa fa-shopping-cart mr-2"></i>หยิบใส่รถเข็น
+                                        </button>
+                                    </div>
+                            </div>
+                            <div class="row my-1">
+                                    <div class="col">จำนวนสินค้า: $remain</div>
+                                    <div class="col-auto">
+                                        <form method="post">
+                                                <input type="hidden" name="pid" value="$id"> 
+                                                <button class="btn btn-sm btn-success">
+                                                    <i class="fa fa-heart mr-2"></i>รายการที่ชอบ
+                                                </button>
+                                        </form>
+                                    </div>
+                            </div>                             
+                        </div>
+                </div>
             </div>
-            </div>
-        <hr>
+        </div>
         HTML;
 
     ?>
@@ -236,6 +326,19 @@
     end_page:
     $mysqli->close();
     ?>
+
+    <!-- Bootstrap Modal Window ใช้แสดงภาพขนาดจริง -->
+    <div class="modal" id="bsModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title"></h6>
+                    <button class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body"><img src=""></div>
+            </div> <!-- modal-content -->
+        </div> <!-- modal-dialog -->
+    </div> <!-- modal -->
 
     <!-- footer -->
     <?php require 'bs_footer.php' ?>
