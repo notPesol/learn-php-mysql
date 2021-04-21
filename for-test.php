@@ -62,6 +62,25 @@
 <body>
     <!-- navbar -->
     <?php require 'bs_navbar.php' ?>
+    
+    <?php
+    if (isset($_POST['btn1'])){
+        echo 'fdsgfdsfgsdf';
+    }
+    if (isset($_POST['btn2'])){
+        echo 'hgjhgkjhlo;oipoip87';
+    }
+    ?>
+
+    <form method="post">
+        <button name="btn1">OK</button>
+    </form>
+
+    <br>
+
+    <form method="post">
+        <button name="btn2">OK</button>
+    </form>
 
 
     <button id="myBtn" class="btn btn-outline-primary" data-toggle="model" data-target="#myModel">show full picture</button>

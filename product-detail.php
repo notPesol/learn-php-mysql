@@ -65,7 +65,7 @@
 
     $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['btn_like'])) {
         $mid = 0;
         $msg = '';
         $bs_class = '';
@@ -154,7 +154,7 @@
                                     <div class="col-auto">
                                         <form method="post">
                                                 <input type="hidden" name="pid" value="$id"> 
-                                                <button class="btn btn-sm btn-success">
+                                                <button name="btn_like" class="btn btn-sm btn-success">
                                                     <i class="fa fa-heart mr-2"></i>รายการที่ชอบ
                                                 </button>
                                         </form>
@@ -173,14 +173,15 @@
     <?php
     date_default_timezone_set('Asia/Bangkok');
     $now = date('Y-m-d H:i:s');
-    if (isset($_POST['question'])) {
+    if (isset($_POST['btn_question'])) {
         if (!isset($_SESSION['member_name'])) {
             echo '<h6 class="text-danger text-center">ต้องเข้าสู่ระบบก่อนถามคำถาม !</h6>';
         } elseif ($_POST['capcha'] == $_SESSION['captcha']) {
             $sql = "INSERT INTO question_answer VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+            $asked_name = $_SESSION['member_name'];
             $q = $_POST['question'];
-            $qn = $_POST['questioner'];
-            $param = [0, $product_id, $q, $qn, $now, '', ''];
+            $param = [0, $product_id, $q, $asked_name, $now, '', ''];
 
             $stmt = $mysqli->stmt_init();
             $stmt->prepare($sql);
@@ -200,13 +201,19 @@
         <div class="media border p-3" style="background: powderblue;">
             <i class="fa fa-question-circle fa-3x mr-3"></i>
             <div class="media-body">
-                <input type="text" name="questioner" placeholder="ชื่อผู้ถาม" class="form-control form-control-sm d-inline w-auto mt-2" required>
-                <input type="text" name="question" class="form-control form-control-sm" placeholder="คำถาม" required>
+                <div class="mb-3">
+                    <label for="textArea">ถามเกี่ยวกับสินค้า</label>
+                    <textarea name="question" class="form-control is-valid" id="textArea" rows="1" required></textarea>
+                    <div class="invalid-feedback">
+                        โปรดถามคำถามที่สุภาพ.
+                    </div>
+                </div>
+
                 <div id="#capcha" class="mt-2">
                     <?php $capcha->show(); ?>
                 </div>
-                <input type="text" placeholder="กรอกอักขระในภาพ" name="capcha" class="form-control form-control-sm d-inline w-auto mt-2" required>
-                <button type="submit" class="btn btn-info btn-sm d-block mt-3 px-5">ตกลง</button>
+                <input type="text" placeholder="กรอกอักขระในภาพ" name="capcha" class="form-control form-control-sm d-inline w-auto mt-2 is-valid" required>
+                <button name="btn_question" type="submit" class="btn btn-info btn-sm d-block mt-3 px-5">ตกลง</button>
             </div>
         </div>
         <input type="hidden" name="product_id" value="<?= $product_id ?>">
