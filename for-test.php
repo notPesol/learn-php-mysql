@@ -27,7 +27,7 @@
                             </div>
                         </li>
                 HTML;
-            }else{
+            } else {
                 echo '<li class="nav-item">
                 <a class="nav-link" href="#">ตะกร้าสินค้า</a>
             </li>';
@@ -50,6 +50,13 @@
     <!-- head -->
     <?php require 'bs_head.php' ?>
 
+    <style>
+        #img{
+            max-width: 500px;
+            max-height: 500px;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -57,10 +64,35 @@
     <?php require 'bs_navbar.php' ?>
 
 
+    <button id="myBtn" class="btn btn-outline-primary" data-toggle="model" data-target="#myModel">show full picture</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">1</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <img id="img" src="product-images/1.jpg" alt="ภาพสินค้า">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- footer -->
     <?php require 'bs_footer.php' ?>
+    <script>
+        $(document).ready(function() {
+            $("#myBtn").click(function() {
+                $("#myModal").modal();
+            });
+        });
+    </script>
 
 </body>
 
 </html>
-

@@ -47,15 +47,6 @@
             $('#modelReply').modal();
             $('#modal-qid').val(questionId);
         }
-
-        //เมื่อคลิกที่ภาพ ให้แสดงภาพขนาดจริงใน Modal
-        $('img#product').click(function() {
-            var name = $('#pro-name').text();
-            $('.modal-title#title-model').text(name);
-            var img_src = $(this).prop('src');
-            $('.modal-body#m-body > img').prop('src', img_src);
-            $('#bsModal').modal();
-        });
     </script>
 </head>
 
@@ -183,7 +174,9 @@
     date_default_timezone_set('Asia/Bangkok');
     $now = date('Y-m-d H:i:s');
     if (isset($_POST['question'])) {
-        if ($_POST['capcha'] == $_SESSION['captcha']) {
+        if (!isset($_SESSION['member_name'])) {
+            echo '<h6 class="text-danger text-center">ต้องเข้าสู่ระบบก่อนถามคำถาม !</h6>';
+        } elseif ($_POST['capcha'] == $_SESSION['captcha']) {
             $sql = "INSERT INTO question_answer VALUES(?, ?, ?, ?, ?, ?, ?)";
             $q = $_POST['question'];
             $qn = $_POST['questioner'];
@@ -337,7 +330,7 @@
     ?>
 
     <!-- Bootstrap Modal Window ใช้แสดงภาพขนาดจริง -->
-    <div class="modal" id="bsModal">
+    <div class="modal" id="bsModal" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -352,6 +345,17 @@
     <!-- footer -->
     <?php require 'bs_footer.php' ?>
 
+
+    <script>
+        //เมื่อคลิกที่ภาพ ให้แสดงภาพขนาดจริงใน Modal
+        $('img#product').click(function() {
+            var name = $('#pro-name').text();
+            $('.modal-title#title-model').text(name);
+            var img_src = $(this).prop('src');
+            $('.modal-body#m-body > img').prop('src', img_src);
+            $('#bsModal').modal();
+        });
+    </script>
 
 </body>
 

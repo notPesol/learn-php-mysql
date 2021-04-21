@@ -35,12 +35,22 @@
     <?php require 'bs_navbar.php' ?>
     <div class="main-container mx-auto mt-5">
         <?php
+
         require 'lib/pagination-v2.class.php';
         $page = new PaginationV2();
 
         $mid = $_SESSION['member_id'];
 
         $mysqli = new mysqli('localhost', 'root', 'admin_080', 'spn_store');
+
+
+        // สำหรับลบรายการที่ชอบ
+        if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $product_id = $_POST['product_id'];
+            $sql = "DELETE FROM wish_list WHERE member_id = $mid AND product_id = $product_id";
+            $mysqli->query($sql);
+            header('location: wish-list.php');
+        }
 
 
         // อ่านข้อมูลสินค้าจากตาราง product ที่มีค่า id เก็บไว้ในตาราง wish_list
@@ -80,12 +90,12 @@
                             <div class="d-flex justify-content-between align-items-end">
                                 <div class="small">ราคา: $prc<br>$r</div>
                                 <div>   
-                                <form method="post">
-                                    <input type="hidden" name="product_id" id="pid" value="$p->id">
-                                    <button class="btn btn-sm btn-transparent" title="ลบออกจากรายการที่ชอบ">
-                                        <i class="fa fa-trash text-danger"></i>
-                                    </button>                        
-                                </form>
+                                    <form method="post">
+                                        <input type="hidden" name="product_id" id="pid" value="$p->id">
+                                        <button class="btn btn-sm btn-transparent" title="ลบออกจากรายการที่ชอบ">
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </button>                        
+                                    </form>
                                 </div>
                             </div>
                         </div>
